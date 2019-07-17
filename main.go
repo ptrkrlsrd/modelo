@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -28,44 +29,45 @@ type Repository struct {
 	IsPrivate  bool
 }
 
-func main() {
-	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	)
-	httpClient := oauth2.NewClient(context.Background(), src)
+type Repositories []Repository
 
-	client := githubv4.NewClient(httpClient)
-	var q struct {
-		Viewer struct {
-			Name         string
-			Repositories struct {
-				Nodes []Repository
-			} `graphql:"repositories(first: 100)"`
-		}
+type githubRepositoryQuery struct {
+	Viewer struct {
+		Name         string
+		Repositories struct {
+			Nodes Repositories
+		} `graphql:"repositories(first: 100)"`
 	}
+}
 
-	err := client.Query(context.Background(), &q, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var templates []string
-	var repositories = q.Viewer.Repositories.Nodes
-	for _, v := range q.Viewer.Repositories.Nodes {
+func (repositories Repositories) GetNames() (templates []string) {
+	for _, v := range repositories {
 		if v.IsTemplate && !v.IsPrivate {
 			templates = append(templates, v.Name)
 		}
 	}
+	return templates
+}
 
-	answers := struct {
-		Name     string
-		Template string
-	}{}
+func newClient(token string) *githubv4.Client {
+	src := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	httpClient := oauth2.NewClient(context.Background(), src)
+	return githubv4.NewClient(httpClient)
+}
+
+func main() {
+	client := newClient(os.Getenv("GITHUB_TOKEN"))
+
+	var query githubRepositoryQuery
+	if err := client.Query(context.Background(), &query, nil); err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	var repositories = query.Viewer.Repositories.Nodes
+	templates := repositories.GetNames()
 
 	var qs = []*survey.Question{
 		{
@@ -85,16 +87,25 @@ func main() {
 		},
 	}
 
-	err = survey.Ask(qs, &answers)
-	if err != nil {
+	answers := struct {
+		Name     string
+		Template string
+	}{}
+
+	if err := survey.Ask(qs, &answers); err != nil {
 		log.Println(err.Error())
+		return
+	}
+
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
 		return
 	}
 
 	for _, v := range repositories {
 		if v.Name == answers.Template {
-			root := dir + "/" + answers.Name
-			_, err := git.PlainClone(root, false, &git.CloneOptions{
+			_, err := git.PlainClone(fmt.Sprintf("%s/%s", dir, answers.Name), false, &git.CloneOptions{
 				URL:      v.URL,
 				Progress: os.Stdout,
 			})
@@ -103,6 +114,8 @@ func main() {
 				log.Println(err.Error())
 				return
 			}
+
+			return
 		}
 	}
 }
