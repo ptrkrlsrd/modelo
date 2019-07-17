@@ -31,7 +31,7 @@ type Repository struct {
 
 type Repositories []Repository
 
-type githubRepositoryQuery struct {
+type GithubRepositoryQuery struct {
 	Viewer struct {
 		Name         string
 		Repositories struct {
@@ -42,11 +42,25 @@ type githubRepositoryQuery struct {
 
 func (repositories Repositories) GetNames() (templates []string) {
 	for _, v := range repositories {
-		if v.IsTemplate && !v.IsPrivate {
-			templates = append(templates, v.Name)
+		if !v.IsTemplate || v.IsPrivate {
+			continue
 		}
+
+		templates = append(templates, v.Name)
 	}
 	return templates
+}
+
+func (repositories Repositories) FindRepoByName(name string) (Repository, error) {
+	for _, v := range repositories {
+		if v.Name != name {
+			continue
+		}
+
+		return v, nil
+	}
+
+	return Repository{}, fmt.Errorf("failed finding repository with name: " + name)
 }
 
 func newClient(token string) *githubv4.Client {
@@ -60,7 +74,7 @@ func newClient(token string) *githubv4.Client {
 func main() {
 	client := newClient(os.Getenv("GITHUB_TOKEN"))
 
-	var query githubRepositoryQuery
+	var query GithubRepositoryQuery
 	if err := client.Query(context.Background(), &query, nil); err != nil {
 		log.Fatal(err)
 		return
@@ -103,19 +117,19 @@ func main() {
 		return
 	}
 
-	for _, v := range repositories {
-		if v.Name == answers.Template {
-			_, err := git.PlainClone(fmt.Sprintf("%s/%s", dir, answers.Name), false, &git.CloneOptions{
-				URL:      v.URL,
-				Progress: os.Stdout,
-			})
+	selectedRepo, err := repositories.FindRepoByName(answers.Name)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
-			if err != nil {
-				log.Println(err.Error())
-				return
-			}
+	_, err = git.PlainClone(fmt.Sprintf("%s/%s", dir, answers.Name), false, &git.CloneOptions{
+		URL:      selectedRepo.URL,
+		Progress: os.Stdout,
+	})
 
-			return
-		}
+	if err != nil {
+		log.Println(err.Error())
+		return
 	}
 }
