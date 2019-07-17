@@ -117,7 +117,7 @@ func main() {
 		return
 	}
 
-	selectedRepo, err := repositories.FindRepoByName(answers.Name)
+	selectedRepo, err := repositories.FindRepoByName(answers.Template)
 	if err != nil {
 		log.Fatal(err)
 		return
