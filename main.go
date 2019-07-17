@@ -9,7 +9,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
-	"gopkg.in/src-d/go-git.v4"
+	git "gopkg.in/src-d/go-git.v4"
 )
 
 type Repository struct {
@@ -38,7 +38,7 @@ func (repositories Repositories) GetTemplates() (templateRepositories Repositori
 
 		templateRepositories = append(templateRepositories, v)
 	}
-	
+
 	return templateRepositories
 }
 
@@ -46,7 +46,7 @@ func (repositories Repositories) GetNames() (repositoryNames []string) {
 	for _, v := range repositories {
 		repositoryNames = append(repositoryNames, v.Name)
 	}
-	
+
 	return repositoryNames
 }
 
@@ -71,7 +71,13 @@ func newClient(token string) *githubv4.Client {
 }
 
 func main() {
-	client := newClient(os.Getenv("GITHUB_TOKEN"))
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		log.Println("No token. Get one here: https://github.com/settings/tokens and set the $GITHUB_TOKEN environment variable")
+		return
+	}
+
+	client := newClient(token)
 
 	var query GithubRepositoryQuery
 	if err := client.Query(context.Background(), &query, nil); err != nil {
