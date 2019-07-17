@@ -1,5 +1,5 @@
 # Templater
-Create project templates from your Github Templates 
+Boilerplate projects from your Github Templates 
 
 ## Usage
 * Get an Github access token to be able to retrieve your repos
