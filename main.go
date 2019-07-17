@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -70,7 +69,15 @@ func main() {
 
 	var qs = []*survey.Question{
 		{
-			Name: "Template",
+			Name:     "Name",
+			Validate: survey.Required,
+			Prompt: &survey.Input{
+				Message: "Choose a name for your new project:",
+			},
+		},
+		{
+			Name:     "Template",
+			Validate: survey.Required,
 			Prompt: &survey.Select{
 				Message: "Choose a template:",
 				Options: templates,
