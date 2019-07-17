@@ -12,16 +12,6 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 )
 
-var query struct {
-	Viewer struct {
-		Login          githubv4.String
-		CreatedAt      githubv4.DateTime
-		IsBountyHunter githubv4.Boolean
-		BioHTML        githubv4.HTML
-		WebsiteURL     githubv4.URI
-	}
-}
-
 type Repository struct {
 	Name       string
 	URL        string
