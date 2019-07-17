@@ -30,15 +30,24 @@ type GithubRepositoryQuery struct {
 	}
 }
 
-func (repositories Repositories) GetNames() (templates []string) {
+func (repositories Repositories) GetTemplates() (templateRepositories Repositories) {
 	for _, v := range repositories {
 		if !v.IsTemplate || v.IsPrivate {
 			continue
 		}
 
-		templates = append(templates, v.Name)
+		templateRepositories = append(templateRepositories, v)
 	}
-	return templates
+	
+	return templateRepositories
+}
+
+func (repositories Repositories) GetNames() (repositoryNames []string) {
+	for _, v := range repositories {
+		repositoryNames = append(repositoryNames, v.Name)
+	}
+	
+	return repositoryNames
 }
 
 func (repositories Repositories) FindRepoByName(name string) (Repository, error) {
@@ -72,6 +81,7 @@ func main() {
 
 	var repositories = query.Viewer.Repositories.Nodes
 	templates := repositories.GetNames()
+	templateNames := templates.GetNames()
 
 	var qs = []*survey.Question{
 		{
@@ -86,7 +96,7 @@ func main() {
 			Validate: survey.Required,
 			Prompt: &survey.Select{
 				Message: "Choose a template:",
-				Options: templates,
+				Options: templateNames,
 			},
 		},
 	}
