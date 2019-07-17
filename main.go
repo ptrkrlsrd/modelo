@@ -80,7 +80,7 @@ func main() {
 	}
 
 	var repositories = query.Viewer.Repositories.Nodes
-	templates := repositories.GetNames()
+	templates := repositories.GetTemplates()
 	templateNames := templates.GetNames()
 
 	var qs = []*survey.Question{
