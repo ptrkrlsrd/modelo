@@ -11,6 +11,9 @@ With Modelo you can easily create projects from Github templates.
 * Set the `GITHUB_TOKEN` environment variable
 * Note: Only 'template repositories' will be listed in the CLI
 
+## TODO
+* Allow users to use other Github users templates
+
 ## What does Modelo mean?
 Modelo is Portuguese for template. I chose the name because I have a good friend from Portugal, who recently lost a loved one due to cancer.
 
