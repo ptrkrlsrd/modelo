@@ -1,4 +1,4 @@
-# Templater
+# Modelo
 Project templating made easy. Boilerplate projects from your Github Templates 
 
 ## Intro
