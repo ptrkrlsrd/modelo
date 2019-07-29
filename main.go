@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/briandowns/spinner"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	git "gopkg.in/src-d/go-git.v4"
@@ -70,26 +72,26 @@ func newClient(token string) *githubv4.Client {
 	return githubv4.NewClient(httpClient)
 }
 
-func main() {
-	token := os.Getenv("GITHUB_TOKEN")
-	if token == "" {
-		log.Println("No token. Get one here: https://github.com/settings/tokens and set the $GITHUB_TOKEN environment variable")
-		return
-	}
-
-	client := newClient(token)
+func getRepositories(client *githubv4.Client) (Repositories, error) {
+	s := spinner.New(spinner.CharSets[10], 100*time.Millisecond)
+	s.Start()
+	defer s.Stop()
 
 	var query GithubRepositoryQuery
 	if err := client.Query(context.Background(), &query, nil); err != nil {
-		log.Fatal(err)
-		return
+		return nil, err
 	}
 
-	var repositories = query.Viewer.Repositories.Nodes
-	templates := repositories.GetTemplates()
-	templateNames := templates.GetNames()
+	return query.Viewer.Repositories.Nodes, nil
+}
 
-	var qs = []*survey.Question{
+type Answers struct {
+	Name     string
+	Template string
+}
+
+func askFirstQuestion(answers *Answers) error {
+	var firstQ = []*survey.Question{
 		{
 			Name:     "Name",
 			Validate: survey.Required,
@@ -97,6 +99,16 @@ func main() {
 				Message: "Choose a name for your new project:",
 			},
 		},
+	}
+
+	return survey.Ask(firstQ, answers)
+}
+
+func askSecondQuestion(answers *Answers, repositories Repositories) error {
+	templates := repositories.GetTemplates()
+	templateNames := templates.GetNames()
+
+	var secondQ = []*survey.Question{
 		{
 			Name:     "Template",
 			Validate: survey.Required,
@@ -107,26 +119,18 @@ func main() {
 		},
 	}
 
-	answers := struct {
-		Name     string
-		Template string
-	}{}
+	return survey.Ask(secondQ, answers)
+}
 
-	if err := survey.Ask(qs, &answers); err != nil {
-		log.Println(err.Error())
-		return
-	}
-
+func cloneRepo(answers *Answers, repositories Repositories) error {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
 
 	selectedRepo, err := repositories.FindRepoByName(answers.Template)
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
 
 	_, err = git.PlainClone(fmt.Sprintf("%s/%s", dir, answers.Name), false, &git.CloneOptions{
@@ -135,7 +139,38 @@ func main() {
 	})
 
 	if err != nil {
-		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func main() {
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		log.Println("No token. Get one here: https://github.com/settings/tokens and set the $GITHUB_TOKEN environment variable")
 		return
+	}
+
+	var answers = new(Answers)
+	err := askFirstQuestion(answers)
+	if err != nil {
+		log.Fatalf("error setting name: %s", err)
+	}
+
+	client := newClient(token)
+	repositories, err := getRepositories(client)
+	if err != nil {
+		log.Fatalf("error getting repositories: %s", err)
+	}
+
+	err = askSecondQuestion(answers, repositories)
+	if err != nil {
+		log.Fatalf("error selecting repo: %s", err)
+	}
+
+	err = cloneRepo(answers, repositories)
+	if err != nil {
+		log.Fatalf("error cloning repo: %s", err)
 	}
 }
