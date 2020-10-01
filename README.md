@@ -1,10 +1,10 @@
 # Modelo
-Project templating made easy. Boilerplate projects from your Github Templates 
+## Project templating made easy. 
 
 ![](recorded.gif)
 
 ## Intro
-With Modelo you can easily create projects from Github templates.
+Modelo makes it easy to boilerplate projects from your Github Templates.
 
 ## Usage
 * Get an Github access token to be able to retrieve your repos
