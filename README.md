@@ -4,7 +4,7 @@
 ![](recorded.gif)
 
 ## Intro
-Modelo makes it easy to boilerplate projects from your Github Templates.
+Project templating made easy using Github templates. Think of it as create-react-app for any project type you could think of.
 
 ## Usage
 * Get an Github access token to be able to retrieve your repos
