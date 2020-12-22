@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"modelo/pkg/core"
+	"github.com/ptrkrlsrd/modelo/pkg/core"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
