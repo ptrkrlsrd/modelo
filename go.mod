@@ -1,15 +1,11 @@
 module github.com/ptrkrlsrd/modelo
 
-go 1.12
+go 1.15
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.0.1
-	github.com/briandowns/spinner v1.6.1
-	github.com/shurcooL/githubv4 v0.0.0-20190625031733-ee671ab25ff0
-	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f // indirect
-	github.com/src-d/go-git v4.7.0+incompatible
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
-	gopkg.in/src-d/go-billy.v4 v4.3.1 // indirect
-	gopkg.in/src-d/go-git.v4 v4.12.0
+	github.com/AlecAivazis/survey/v2 v2.2.7
+	github.com/shurcooL/githubv4 v0.0.0-20201206200315-234843c633fa
+	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
+	golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5
+	gopkg.in/src-d/go-git.v4 v4.13.1
 )
