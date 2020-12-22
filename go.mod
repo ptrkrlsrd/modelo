@@ -1,4 +1,4 @@
-module modelo
+module github.com/ptrkrlsrd/modelo
 
 go 1.12
 
