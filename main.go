@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"github.com/ptrkrlsrd/modelo/pkg/core"
+	"github.com/ptrkrlsrd/modelo/pkg/template"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -56,7 +56,7 @@ func main() {
 		log.Fatalf("error setting name: %s", err)
 	}
 
-	service := core.NewService(githubToken)
+	service := template.NewService(githubToken)
 	repositories, err := service.GetRepositories(context.Background())
 	if err != nil {
 		log.Fatalf("error getting repositories: %s", err)
