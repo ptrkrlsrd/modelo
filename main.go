@@ -3,55 +3,21 @@ package main
 import (
 	"context"
 	"log"
-	"github.com/ptrkrlsrd/modelo/pkg/template"
 	"os"
 
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/ptrkrlsrd/modelo/internal/feedback"
+	"github.com/ptrkrlsrd/modelo/pkg/template"
 )
-
-type SurveyResponse struct {
-	Name     string
-	Template string
-}
-
-func askForProjectName(answer *SurveyResponse) error {
-	var firstQ = []*survey.Question{
-		{
-			Name:     "Name",
-			Validate: survey.Required,
-			Prompt: &survey.Input{
-				Message: "Choose a name for your new project:",
-			},
-		},
-	}
-
-	return survey.Ask(firstQ, answer)
-}
-
-func askForProjectTemplate(answers *SurveyResponse, options []string) error {
-	var secondQ = []*survey.Question{
-		{
-			Name:     "Template",
-			Validate: survey.Required,
-			Prompt: &survey.Select{
-				Message: "Choose a template:",
-				Options: options,
-			},
-		},
-	}
-
-	return survey.Ask(secondQ, answers)
-}
 
 func main() {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	if githubToken == "" {
-		log.Println("No token. Get one here: https://github.com/settings/tokens and set the $GITHUB_TOKEN environment variable")
+		log.Println("No token set. Get one here: https://github.com/settings/tokens and set the $GITHUB_TOKEN environment variable")
 		return
 	}
 
-	var selectedOption = new(SurveyResponse)
-	err := askForProjectName(selectedOption)
+	var selectedOption = new(feedback.Answer)
+	err := feedback.AskForProjectName(selectedOption)
 	if err != nil {
 		log.Fatalf("error setting name: %s", err)
 	}
@@ -63,7 +29,7 @@ func main() {
 	}
 
 	templateNames := repositories.GetTemplates().GetNames()
-	err = askForProjectTemplate(selectedOption, templateNames)
+	err = feedback.AskForProjectTemplate(selectedOption, templateNames)
 	if err != nil {
 		log.Fatalf("error selecting repo: %s", err)
 	}
