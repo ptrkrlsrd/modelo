@@ -1,4 +1,4 @@
-package core
+package template
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type Repositories []Repository
 func (repositories Repositories) GetTemplates() Repositories {
 	var templateRepositories Repositories
 	for _, v := range repositories {
-		if !v.IsTemplate || v.IsPrivate {
+		if !v.IsTemplate {
 			continue
 		}
 
