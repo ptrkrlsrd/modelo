@@ -7,14 +7,21 @@ import (
 
 	"github.com/shurcooL/githubv4"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
+
+const DefaultGithubUsername = "github"
 
 type Service struct {
 	GithubClient *githubv4.Client
+	githubToken  string
 }
 
 func NewService(githubToken string) Service {
-	return Service{GithubClient: newGithubClient(githubToken)}
+	return Service{
+		GithubClient: newGithubClient(githubToken),
+		githubToken:  githubToken,
+	}
 }
 
 type GithubRepositoryQuery struct {
@@ -49,6 +56,10 @@ func (service Service) CloneTemplate(projectName string, template string, reposi
 	_, err = git.PlainClone(fmt.Sprintf("%s/%s", dir, projectName), false, &git.CloneOptions{
 		URL:      selectedRepo.URL,
 		Progress: os.Stdout,
+		Auth: &http.BasicAuth{
+			Username: DefaultGithubUsername,
+			Password: service.githubToken,
+		},
 	})
 
 	if err != nil {

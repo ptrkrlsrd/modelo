@@ -8,7 +8,7 @@ type Answer struct {
 }
 
 func AskForProjectName(answer *Answer) error {
-	var firstQ = []*survey.Question{
+	var firstQuestion = []*survey.Question{
 		{
 			Name:     "Name",
 			Validate: survey.Required,
@@ -18,11 +18,11 @@ func AskForProjectName(answer *Answer) error {
 		},
 	}
 
-	return survey.Ask(firstQ, answer)
+	return survey.Ask(firstQuestion, answer)
 }
 
 func AskForProjectTemplate(answer *Answer, options []string) error {
-	var secondQ = []*survey.Question{
+	var secondQuestion = []*survey.Question{
 		{
 			Name:     "Template",
 			Validate: survey.Required,
@@ -33,5 +33,5 @@ func AskForProjectTemplate(answer *Answer, options []string) error {
 		},
 	}
 
-	return survey.Ask(secondQ, answer)
+	return survey.Ask(secondQuestion, answer)
 }
