@@ -12,15 +12,23 @@ import (
 
 const DefaultGithubUsername = "github"
 
-type Service struct {
-	GithubClient *githubv4.Client
-	githubToken  string
+type GithubAuth struct {
+	Username string
+	Token    string
 }
 
-func NewService(githubToken string) Service {
+type Service struct {
+	GithubClient *githubv4.Client
+	auth         GithubAuth
+}
+
+func NewService(githubUsername string, githubToken string) Service {
 	return Service{
 		GithubClient: newGithubClient(githubToken),
-		githubToken:  githubToken,
+		auth: GithubAuth{
+			Username: githubUsername,
+			Token:    githubToken,
+		},
 	}
 }
 
@@ -57,8 +65,8 @@ func (service Service) CloneTemplate(projectName string, template string, reposi
 		URL:      selectedRepo.URL,
 		Progress: os.Stdout,
 		Auth: &http.BasicAuth{
-			Username: DefaultGithubUsername,
-			Password: service.githubToken,
+			Username: service.auth.Username,
+			Password: service.auth.Token,
 		},
 	})
 
