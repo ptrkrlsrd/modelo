@@ -10,8 +10,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
-const DefaultGithubUsername = "github"
-
 type GithubAuth struct {
 	Username string
 	Token    string
