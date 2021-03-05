@@ -15,13 +15,19 @@ func readConfig() (*viper.Viper, error) {
 	config.SetConfigName("config")
 	config.SetConfigType("json")
 
-	configPaths := []string{"/etc/modelo/", "$HOME/.config/modelo", ".modelo"}
+	configPaths := []string{"/etc/modelo/", "$HOME/.config/modelo", ".modelo/"}
 	for _, i := range configPaths {
 		config.AddConfigPath(i)
 	}
 
 	if err := config.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("fatal error config file: %s", err)
+		helpString := fmt.Sprintf("no config file named 'config.json'\n")
+		helpString += fmt.Sprintf("1. Create a file called 'config.json' in one of the following paths: %s\n", configPaths)
+		helpString += "2. Create a personal access token on Github with read access to repositories\n"
+		helpString += fmt.Sprintf("3. Add the following content: \n\t%s\n", `{ "username": "<github username>", "token": "<github token>" } `)
+
+		err = fmt.Errorf("fatal error config file: %s", helpString)
+		return nil, err
 	}
 
 	return config, nil
@@ -30,7 +36,7 @@ func readConfig() (*viper.Viper, error) {
 func main() {
 	config, err := readConfig()
 	if err != nil {
-		log.Fatalf("error parsing config: %s", err)
+		log.Fatal(err)
 	}
 
 	githubToken := config.Get("token").(string)
