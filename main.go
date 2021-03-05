@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/ptrkrlsrd/modelo/internal/feedback"
-	"github.com/ptrkrlsrd/modelo/pkg/template"
+	"github.com/ptrkrlsrd/modelo/pkg/github"
 	"github.com/spf13/viper"
 )
 
@@ -47,7 +47,7 @@ func main() {
 		log.Fatalf("error setting name: %s", err)
 	}
 
-	service := template.NewService(githubUsername, githubToken)
+	service := github.NewService(githubUsername, githubToken)
 	repositories, err := service.GetRepositories(context.Background())
 	if err != nil {
 		log.Fatalf("error getting repositories: %s", err)
