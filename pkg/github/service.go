@@ -30,7 +30,7 @@ func NewService(githubUsername string, githubToken string) Service {
 	}
 }
 
-type GithubRepositoryQuery struct {
+type RepositoryQuery struct {
 	Viewer struct {
 		Name         string
 		Repositories struct {
@@ -40,7 +40,7 @@ type GithubRepositoryQuery struct {
 }
 
 func (service Service) GetRepositories(ctx context.Context) (Repositories, error) {
-	var query GithubRepositoryQuery
+	var query RepositoryQuery
 	if err := service.GithubClient.Query(ctx, &query, nil); err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (service Service) GetRepositories(ctx context.Context) (Repositories, error
 	return query.Viewer.Repositories.Nodes, nil
 }
 
-type GithubGistQuery struct {
+type GistQuery struct {
 	Viewer struct {
 		Name  string
 		Gists struct {
@@ -58,7 +58,7 @@ type GithubGistQuery struct {
 }
 
 func (service Service) GetGists(ctx context.Context) (Gists, error) {
-	var query GithubGistQuery
+	var query GistQuery
 	if err := service.GithubClient.Query(ctx, &query, nil); err != nil {
 		return nil, err
 	}
