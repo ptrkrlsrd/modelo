@@ -2,15 +2,15 @@ package feedback
 
 import "github.com/AlecAivazis/survey/v2"
 
-type Answer struct {
-	Name     string
-	Template string
+type TemplateAnswer struct {
+	ProjectName string
+	Template    string
 }
 
-func AskForProjectName(answer *Answer) error {
+func AskForProjectName(answer *TemplateAnswer) error {
 	var firstQuestion = []*survey.Question{
 		{
-			Name:     "Name",
+			Name:     "ProjectName",
 			Validate: survey.Required,
 			Prompt: &survey.Input{
 				Message: "Choose a name for your new project:",
@@ -21,13 +21,28 @@ func AskForProjectName(answer *Answer) error {
 	return survey.Ask(firstQuestion, answer)
 }
 
-func AskForProjectTemplate(answer *Answer, options []string) error {
+func AskForProjectTemplate(answer *TemplateAnswer, options []string) error {
 	var secondQuestion = []*survey.Question{
 		{
 			Name:     "Template",
 			Validate: survey.Required,
 			Prompt: &survey.Select{
 				Message: "Choose a template:",
+				Options: options,
+			},
+		},
+	}
+
+	return survey.Ask(secondQuestion, answer)
+}
+
+func AskForProjectGist(answer *TemplateAnswer, options []string) error {
+	var secondQuestion = []*survey.Question{
+		{
+			Name:     "Template",
+			Validate: survey.Required,
+			Prompt: &survey.Select{
+				Message: "Choose a gist:",
 				Options: options,
 			},
 		},

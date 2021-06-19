@@ -1,4 +1,5 @@
 # Modelo
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ptrkrlsrd_modelo)](https://sonarcloud.io/dashboard?id=ptrkrlsrd_modelo)
 ## Project templating made easy. 
 
 ![](recorded.gif)
@@ -20,5 +21,3 @@ Project templating made easy using Github templates. Think of it as create-react
 
 ## What does Modelo mean?
 Modelo is Portuguese for template. I chose the name because I have a good friend from Portugal, who recently lost a loved one due to cancer.
-
-It would be awesome if you made a donation to cancer research here(or anywhere else for that matter): https://www.cancerresearchuk.org/support-us/donate#/

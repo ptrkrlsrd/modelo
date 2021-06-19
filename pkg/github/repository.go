@@ -13,7 +13,7 @@ type Repository struct {
 
 type Repositories []Repository
 
-func (repositories Repositories) GetTemplates() Repositories {
+func (repositories Repositories) FilterTemplates() Repositories {
 	var templateRepositories Repositories
 	for _, v := range repositories {
 		if !v.IsTemplate {
@@ -26,7 +26,7 @@ func (repositories Repositories) GetTemplates() Repositories {
 	return templateRepositories
 }
 
-func (repositories Repositories) GetNames() (repositoryNames []string) {
+func (repositories Repositories) Names() (repositoryNames []string) {
 	for _, v := range repositories {
 		repositoryNames = append(repositoryNames, v.Name)
 	}
