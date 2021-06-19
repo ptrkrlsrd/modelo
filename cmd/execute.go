@@ -4,12 +4,49 @@ import (
 	"context"
 	"log"
 	"os"
-	"path"
 
 	"github.com/ptrkrlsrd/modelo/internal/feedback"
 	"github.com/ptrkrlsrd/modelo/pkg/github"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var rootCmd = &cobra.Command{
+	Use:   "hugo",
+	Short: "Hugo is a very fast static site generator",
+	Long: `A Fast and Flexible Static Site Generator built with
+				  love by spf13 and friends in Go.
+				  Complete documentation is available at http://hugo.spf13.com`,
+	Run: func(cmd *cobra.Command, args []string) {
+		config, err := readConfig()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		githubToken := config.GetString("token")
+		githubUsername := config.GetString("username")
+
+		service := github.NewService(githubUsername, githubToken)
+		ctx := context.Background()
+		var selectedOption = new(feedback.Answer)
+		if err = feedback.AskForProjectName(selectedOption); err != nil {
+			log.Fatal(err)
+		}
+
+		selectFromGithubTemplates(service, ctx, selectedOption)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(gistCmd)
+}
+
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+}
 
 func readConfig() (*viper.Viper, error) {
 	config := viper.New()
@@ -25,51 +62,7 @@ func readConfig() (*viper.Viper, error) {
 	return config, nil
 }
 
-func Execute() {
-	config, err := readConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	githubToken := config.GetString("token")
-	githubUsername := config.GetString("username")
-
-	service := github.NewService(githubUsername, githubToken)
-	ctx := context.Background()
-	var selectedOption = new(feedback.TemplateAnswer)
-	if err = feedback.AskForProjectName(selectedOption); err != nil {
-		log.Fatal(err)
-	}
-
-	args := os.Args
-	if len(args) == 1 {
-		selectFromGithubTemplates(service, ctx, selectedOption)
-	} else if args[1] == "from-gist" {
-		selectFromGithubGists(service, ctx, selectedOption)
-	}
-
-}
-
-func selectFromGithubGists(service github.Service, ctx context.Context, selectedOption *feedback.TemplateAnswer) {
-	gists, err := service.GetGists(ctx)
-	if err != nil {
-		log.Fatalf("error getting gists: %s", err)
-	}
-
-	gistFiles, gistNames := extractFilesFromGists(gists)
-	if err = feedback.AskForProjectGist(selectedOption, gistNames); err != nil {
-		log.Fatalf("error selecting repo: %s", err)
-	}
-
-	if err = os.Mkdir(selectedOption.ProjectName, os.ModePerm); err != nil {
-		log.Fatal(err)
-	}
-
-	gist := gistFiles[selectedOption.Template]
-	writeGistToFile(selectedOption.ProjectName, gist)
-}
-
-func selectFromGithubTemplates(service github.Service, ctx context.Context, selectedOption *feedback.TemplateAnswer) {
+func selectFromGithubTemplates(service github.Service, ctx context.Context, selectedOption *feedback.Answer) {
 	repositories, err := service.GetRepositories(ctx)
 	if err != nil {
 		log.Fatalf("error getting repositories: %s", err)
@@ -77,38 +70,11 @@ func selectFromGithubTemplates(service github.Service, ctx context.Context, sele
 
 	templates := repositories.FilterTemplates()
 	templateNames := templates.Names()
-	if err = feedback.AskForProjectTemplate(selectedOption, templateNames); err != nil {
+	if err = feedback.AskForTemplate("Select a Github Template: ", selectedOption, templateNames); err != nil {
 		log.Fatalf("error selecting repo: %s", err)
 	}
 
 	if err = service.CloneTemplate(selectedOption.ProjectName, selectedOption.Template, repositories); err != nil {
 		log.Fatalf("error cloning repo: %s", err)
 	}
-}
-
-func writeGistToFile(filePath string, gist github.File) error {
-	gistFile, err := os.Create(path.Join(filePath, gist.Name))
-	if err != nil {
-		return err
-	}
-
-	defer gistFile.Close()
-
-	if _, err = gistFile.WriteString(gist.Text); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func extractFilesFromGists(gists github.Gists) (g map[string]github.File, gistNames []string) {
-	g = make(map[string]github.File)
-
-	for _, i := range gists {
-		for _, file := range i.Files {
-			g[file.Name] = file
-			gistNames = append(gistNames, file.Name)
-		}
-	}
-	return g, gistNames
 }
