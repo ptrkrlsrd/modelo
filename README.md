@@ -5,7 +5,7 @@
 ![](recorded.gif)
 
 ## Intro
-Project templating made easy using Github templates. Think of it as create-react-app for any project type you could think of.
+Project templating made easy using Github templates. Think of it as create-react-app for any type of projects.
 
 ## Usage
 1. Create a file called 'config.json' in one of the following paths: [/etc/modelo/ $HOME/.config/modelo .modelo/]
