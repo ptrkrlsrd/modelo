@@ -14,7 +14,7 @@ import (
 var (
 	config         *viper.Viper
 	selectedOption *feedback.Answer
-	projectName    string
+	projectPath    string
 	templateName   string
 	gistFileName   string
 )
@@ -27,7 +27,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&templateName, "template", "t", "", "template name")
-	rootCmd.PersistentFlags().StringVarP(&projectName, "project", "p", "", "project name")
+	rootCmd.PersistentFlags().StringVarP(&projectPath, "path", "p", "", "path")
 	gistCmd.PersistentFlags().StringVarP(&gistFileName, "filename", "f", "", "file name")
 
 	rootCmd.AddCommand(gistCmd)
@@ -39,7 +39,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		selectedOption = &feedback.Answer{
 			Template:    templateName,
-			ProjectName: projectName,
+			ProjectName: projectPath,
 		}
 
 		service := github.NewService(config.GetString("username"), config.GetString("token"))
