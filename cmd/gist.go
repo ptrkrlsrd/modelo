@@ -25,8 +25,9 @@ var gistCmd = &cobra.Command{
 			log.Fatalf("error getting gists: %s", err)
 		}
 
-		gistFiles := gists.CreateFileMap()
-		gistNames := gists.GetFilenames()
+		ignored := config.GetStringSlice("gists.ignored")
+		filteredFiles := gists.GetFiles().Filter(ignored)
+		gistNames := filteredFiles.GetNames()
 
 		if err := feedback.AskGistQuestions("Select a Gist", selectedOption, gistNames); err != nil {
 			log.Fatal(err)
@@ -36,6 +37,7 @@ var gistCmd = &cobra.Command{
 			selectedOption.FileName = selectedOption.Template
 		}
 
+		gistFiles := filteredFiles.ToMap()
 		selectedGist := gistFiles[selectedOption.Template]
 		selectedGist.Write(selectedOption.ProjectName, selectedOption.FileName)
 	},
