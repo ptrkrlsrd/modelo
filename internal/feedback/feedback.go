@@ -24,10 +24,6 @@ func AskTemplateQuestion(message string, answer *Answer, options []string) error
 	projectNameQuestion := newQuestion("ProjectName", "Choose a name for your new project:", answer)
 	var questions []*survey.Question
 
-	if answer.ProjectName == "" {
-		questions = append(questions, &projectNameQuestion)
-	}
-
 	if answer.Template == "" {
 		questions = append(questions, &survey.Question{
 			Name:     "Template",
@@ -37,6 +33,10 @@ func AskTemplateQuestion(message string, answer *Answer, options []string) error
 				Options: options,
 			},
 		})
+	}
+
+	if answer.ProjectName == "" {
+		questions = append(questions, &projectNameQuestion)
 	}
 
 	return survey.Ask(questions, answer)
@@ -45,11 +45,6 @@ func AskTemplateQuestion(message string, answer *Answer, options []string) error
 func AskGistQuestions(message string, answer *Answer, options []string) error {
 	var questions []*survey.Question
 
-	if answer.FileName == "" {
-		fileNameQuestion := newQuestion("FileName", "Filename: ", answer)
-		questions = append(questions, &fileNameQuestion)
-	}
-
 	if answer.Template == "" {
 		questions = append(questions, &survey.Question{
 			Name:     "Template",
@@ -59,6 +54,11 @@ func AskGistQuestions(message string, answer *Answer, options []string) error {
 				Options: options,
 			},
 		})
+	}
+
+	if answer.FileName == "" {
+		fileNameQuestion := newQuestion("FileName", "Filename: ", answer)
+		questions = append(questions, &fileNameQuestion)
 	}
 
 	return survey.Ask(questions, answer)
