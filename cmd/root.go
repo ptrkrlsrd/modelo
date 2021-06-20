@@ -11,30 +11,25 @@ import (
 	"github.com/spf13/viper"
 )
 
+var config *viper.Viper
+
 var rootCmd = &cobra.Command{
 	Use:   "modelo",
-	Short: "Boilerplate your projects from Github Templates and gists",
+	Short: "Boilerplate your projects from Github Templates and Gists",
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := readConfig()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		githubToken := config.GetString("token")
-		githubUsername := config.GetString("username")
-
-		service := github.NewService(githubUsername, githubToken)
+		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
-		var selectedOption = new(feedback.Answer)
-		if err = feedback.AskForProjectName(selectedOption); err != nil {
-			log.Fatal(err)
-		}
-
-		selectFromGithubTemplates(service, ctx, selectedOption)
+		selectFromGithubTemplates(service, ctx)
 	},
 }
 
 func init() {
+	var err error
+	config, err = readConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	rootCmd.AddCommand(gistCmd)
 }
 
@@ -59,7 +54,7 @@ func readConfig() (*viper.Viper, error) {
 	return config, nil
 }
 
-func selectFromGithubTemplates(service github.Service, ctx context.Context, selectedOption *feedback.Answer) {
+func selectFromGithubTemplates(service github.Service, ctx context.Context) {
 	repositories, err := service.GetRepositories(ctx)
 	if err != nil {
 		log.Fatalf("error getting repositories: %s", err)
@@ -67,7 +62,9 @@ func selectFromGithubTemplates(service github.Service, ctx context.Context, sele
 
 	templates := repositories.FilterTemplates()
 	templateNames := templates.Names()
-	if err = feedback.AskForTemplate("Select a Github Template: ", selectedOption, templateNames); err != nil {
+
+	var selectedOption = new(feedback.Answer)
+	if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {
 		log.Fatalf("error selecting repo: %s", err)
 	}
 

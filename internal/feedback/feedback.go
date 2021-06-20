@@ -4,25 +4,27 @@ import "github.com/AlecAivazis/survey/v2"
 
 type Answer struct {
 	ProjectName string
+	FileName    string
 	Template    string
 }
 
-func AskForProjectName(answer *Answer) error {
-	var firstQuestion = []*survey.Question{
-		{
-			Name:     "ProjectName",
-			Validate: survey.Required,
-			Prompt: &survey.Input{
-				Message: "Choose a name for your new project:",
-			},
+func newQuestion(name string, message string, answer *Answer) survey.Question {
+	var firstQuestion = survey.Question{
+		Name:     name,
+		Validate: survey.Required,
+		Prompt: &survey.Input{
+			Message: message,
 		},
 	}
 
-	return survey.Ask(firstQuestion, answer)
+	return firstQuestion
 }
 
-func AskForTemplate(message string, answer *Answer, options []string) error {
-	var secondQuestion = []*survey.Question{
+func AskTemplateQuestion(message string, answer *Answer, options []string) error {
+	projectNameQuestion := newQuestion("ProjectName", "Choose a name for your new project:", answer)
+
+	var questions = []*survey.Question{
+		&projectNameQuestion,
 		{
 			Name:     "Template",
 			Validate: survey.Required,
@@ -33,5 +35,23 @@ func AskForTemplate(message string, answer *Answer, options []string) error {
 		},
 	}
 
-	return survey.Ask(secondQuestion, answer)
+	return survey.Ask(questions, answer)
+}
+
+func AskGistQuestions(message string, answer *Answer, options []string) error {
+	fileNameQuestion := newQuestion("FileName", "Filename", answer)
+
+	var questions = []*survey.Question{
+		&fileNameQuestion,
+		{
+			Name:     "Template",
+			Validate: survey.Required,
+			Prompt: &survey.Select{
+				Message: message,
+				Options: options,
+			},
+		},
+	}
+
+	return survey.Ask(questions, answer)
 }

@@ -15,34 +15,23 @@ var gistCmd = &cobra.Command{
 	Use:   "gist",
 	Short: "Gist",
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := readConfig()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		githubToken := config.GetString("token")
-		githubUsername := config.GetString("username")
-
-		service := github.NewService(githubUsername, githubToken)
+		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 		var selectedOption = new(feedback.Answer)
-		if err = feedback.AskForProjectName(selectedOption); err != nil {
-			log.Fatal(err)
-		}
+
 		gists, err := service.GetGists(ctx)
 		if err != nil {
 			log.Fatalf("error getting gists: %s", err)
 		}
 
 		gistFiles, gistNames := extractFilesFromGists(gists)
-		if err = feedback.AskForTemplate("Select a Github Gist", selectedOption, gistNames); err != nil {
-			log.Fatalf("error selecting repo: %s", err)
+		if err := feedback.AskGistQuestions("Select a Gist", selectedOption, gistNames); err != nil {
+			log.Fatal(err)
 		}
-
 		createFolder(selectedOption.ProjectName)
 
 		gist := gistFiles[selectedOption.Template]
-		writeGistToFile(selectedOption.ProjectName, gist)
+		writeGistToFile(selectedOption.ProjectName, selectedOption.FileName, gist)
 	},
 }
 
@@ -62,8 +51,8 @@ func extractFilesFromGists(gists github.Gists) (g map[string]github.File, gistNa
 	return g, gistNames
 }
 
-func writeGistToFile(filePath string, gist github.File) error {
-	gistFile, err := os.Create(path.Join(filePath, gist.Name))
+func writeGistToFile(filePath string, fileName string, gist github.File) error {
+	gistFile, err := os.Create(path.Join(filePath, fileName))
 	if err != nil {
 		return err
 	}
