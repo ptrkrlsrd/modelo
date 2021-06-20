@@ -72,7 +72,7 @@ func (service Service) CloneTemplate(projectName string, template string, reposi
 		return err
 	}
 
-	selectedRepo, err := repositories.FindRepoByName(template)
+	selectedRepo, err := repositories.FindByName(template)
 	if err != nil {
 		return err
 	}

@@ -50,8 +50,8 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("error getting repositories: %s", err)
 		}
 
-		templates := repositories.FilterTemplates()
-		templateNames := templates.Names()
+		templates := repositories.GetTemplates()
+		templateNames := templates.GetNames()
 
 		if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {
 			log.Fatalf("error selecting repo: %s", err)
