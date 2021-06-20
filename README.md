@@ -29,7 +29,7 @@ Available Commands:
 
 Flags:
   -h, --help              help for modelo
-  -p, --project string    project name
+  -p, --path string       path
   -t, --template string   template name
 
 Use "modelo [command] --help" for more information about a command.
