@@ -38,8 +38,7 @@ Use "modelo [command] --help" for more information about a command.
 ```
 4. Run `modelo` or `modelo gist` (to create from a Gist) and follow the instructions
 * Note: Only 'template repositories' will be listed in the CLI
-## TODO
-=======
+
 ## Upcoming features
 * Allow users to use other Github users templates
 
