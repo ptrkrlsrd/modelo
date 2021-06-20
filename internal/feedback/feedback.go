@@ -1,6 +1,8 @@
 package feedback
 
-import "github.com/AlecAivazis/survey/v2"
+import (
+	"github.com/AlecAivazis/survey/v2"
+)
 
 type Answer struct {
 	ProjectName string
@@ -31,6 +33,7 @@ func AskTemplateQuestion(message string, answer *Answer, options []string) error
 			Prompt: &survey.Select{
 				Message: message,
 				Options: options,
+				VimMode: true,
 			},
 		})
 	}
@@ -50,15 +53,23 @@ func AskGistQuestions(message string, answer *Answer, options []string) error {
 			Name:     "Template",
 			Validate: survey.Required,
 			Prompt: &survey.Select{
-				Message: message,
-				Options: options,
+				Renderer: survey.Renderer{},
+				Message:  message,
+				Options:  options,
+				VimMode:  true,
 			},
 		})
 	}
 
 	if answer.FileName == "" {
-		fileNameQuestion := newQuestion("FileName", "Filename: ", answer)
-		questions = append(questions, &fileNameQuestion)
+		questions = append(questions, &survey.Question{
+			Name: "FileName",
+			Prompt: &survey.Input{
+				Renderer: survey.Renderer{},
+				Help:     "Leave blank to use Gist name",
+				Message:  "Filename: ",
+			},
+		})
 	}
 
 	return survey.Ask(questions, answer)

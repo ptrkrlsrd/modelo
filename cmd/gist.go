@@ -32,6 +32,10 @@ var gistCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		if selectedOption.FileName == "" {
+			selectedOption.FileName = selectedOption.Template
+		}
+
 		selectedGist := gistFiles[selectedOption.Template]
 		selectedGist.Write(selectedOption.ProjectName, selectedOption.FileName)
 	},
