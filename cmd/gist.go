@@ -3,8 +3,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"os"
-	"path"
 
 	"github.com/ptrkrlsrd/modelo/internal/feedback"
 	"github.com/ptrkrlsrd/modelo/pkg/github"
@@ -26,44 +24,14 @@ var gistCmd = &cobra.Command{
 			log.Fatalf("error getting gists: %s", err)
 		}
 
-		gistFiles, gistNames := extractFilesFromGists(gists)
+		gistFiles := gists.CreateFileMap()
+		gistNames := gists.GetFilenames()
+
 		if err := feedback.AskGistQuestions("Select a Gist", selectedOption, gistNames); err != nil {
 			log.Fatal(err)
 		}
-		createFolder(selectedOption.ProjectName)
 
-		gist := gistFiles[selectedOption.Template]
-		writeGistToFile(selectedOption.ProjectName, selectedOption.FileName, gist)
+		selectedGist := gistFiles[selectedOption.Template]
+		selectedGist.Write(selectedOption.ProjectName, selectedOption.FileName)
 	},
-}
-
-func createFolder(folderPath string) {
-	os.Mkdir(folderPath, os.ModePerm)
-}
-
-func extractFilesFromGists(gists github.Gists) (g map[string]github.File, gistNames []string) {
-	g = make(map[string]github.File)
-
-	for _, i := range gists {
-		for _, file := range i.Files {
-			g[file.Name] = file
-			gistNames = append(gistNames, file.Name)
-		}
-	}
-	return g, gistNames
-}
-
-func writeGistToFile(filePath string, fileName string, gist github.File) error {
-	gistFile, err := os.Create(path.Join(filePath, fileName))
-	if err != nil {
-		return err
-	}
-
-	defer gistFile.Close()
-
-	if _, err = gistFile.WriteString(gist.Text); err != nil {
-		return err
-	}
-
-	return nil
 }
