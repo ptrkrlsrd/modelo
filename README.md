@@ -16,6 +16,25 @@ Project templating made easy using Github templates. Think of it as create-react
 ```
 * Note: Only 'template repositories' will be listed in the CLI
 
+```
+Boilerplate your projects from Github Templates and Gists
+
+Usage:
+  modelo [flags]
+  modelo [command]
+
+Available Commands:
+  gist        Gist
+  help        Help about any command
+
+Flags:
+  -h, --help              help for modelo
+  -p, --project string    project name
+  -t, --template string   template name
+
+Use "modelo [command] --help" for more information about a command.
+```
+
 ## TODO
 * Allow users to use other Github users templates
 
