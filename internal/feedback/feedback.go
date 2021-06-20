@@ -22,35 +22,43 @@ func newQuestion(name string, message string, answer *Answer) survey.Question {
 
 func AskTemplateQuestion(message string, answer *Answer, options []string) error {
 	projectNameQuestion := newQuestion("ProjectName", "Choose a name for your new project:", answer)
+	var questions []*survey.Question
 
-	var questions = []*survey.Question{
-		&projectNameQuestion,
-		{
+	if answer.ProjectName == "" {
+		questions = append(questions, &projectNameQuestion)
+	}
+
+	if answer.Template == "" {
+		questions = append(questions, &survey.Question{
 			Name:     "Template",
 			Validate: survey.Required,
 			Prompt: &survey.Select{
 				Message: message,
 				Options: options,
 			},
-		},
+		})
 	}
 
 	return survey.Ask(questions, answer)
 }
 
 func AskGistQuestions(message string, answer *Answer, options []string) error {
-	fileNameQuestion := newQuestion("FileName", "Filename", answer)
+	var questions []*survey.Question
 
-	var questions = []*survey.Question{
-		&fileNameQuestion,
-		{
+	if answer.FileName == "" {
+		fileNameQuestion := newQuestion("FileName", "Filename: ", answer)
+		questions = append(questions, &fileNameQuestion)
+	}
+
+	if answer.Template == "" {
+		questions = append(questions, &survey.Question{
 			Name:     "Template",
 			Validate: survey.Required,
 			Prompt: &survey.Select{
 				Message: message,
 				Options: options,
 			},
-		},
+		})
 	}
 
 	return survey.Ask(questions, answer)

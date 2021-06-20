@@ -11,12 +11,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-var config *viper.Viper
+var (
+	config         *viper.Viper
+	selectedOption *feedback.Answer
+	projectName    string
+	templateName   string
+	gistFileName   string
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "modelo",
 	Short: "Boilerplate your projects from Github Templates and Gists",
 	Run: func(cmd *cobra.Command, args []string) {
+		selectedOption = new(feedback.Answer)
+		selectedOption.Template = templateName
+		selectedOption.ProjectName = projectName
+
 		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 		selectFromGithubTemplates(service, ctx)
@@ -29,6 +39,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rootCmd.PersistentFlags().StringVarP(&templateName, "template", "t", "", "template name")
+	rootCmd.PersistentFlags().StringVarP(&projectName, "project", "p", "", "project name")
+	gistCmd.PersistentFlags().StringVarP(&gistFileName, "filename", "f", "", "file name")
 
 	rootCmd.AddCommand(gistCmd)
 }
@@ -63,7 +77,6 @@ func selectFromGithubTemplates(service github.Service, ctx context.Context) {
 	templates := repositories.FilterTemplates()
 	templateNames := templates.Names()
 
-	var selectedOption = new(feedback.Answer)
 	if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {
 		log.Fatalf("error selecting repo: %s", err)
 	}

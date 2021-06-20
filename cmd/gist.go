@@ -18,6 +18,8 @@ var gistCmd = &cobra.Command{
 		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 		var selectedOption = new(feedback.Answer)
+		selectedOption.Template = templateName
+		selectedOption.FileName = gistFileName
 
 		gists, err := service.GetGists(ctx)
 		if err != nil {
