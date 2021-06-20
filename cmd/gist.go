@@ -15,9 +15,10 @@ var gistCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
-		var selectedOption = new(feedback.Answer)
-		selectedOption.Template = templateName
-		selectedOption.FileName = gistFileName
+		selectedOption = &feedback.Answer{
+			Template: templateName,
+			FileName: gistFileName,
+		}
 
 		gists, err := service.GetGists(ctx)
 		if err != nil {

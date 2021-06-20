@@ -19,20 +19,6 @@ var (
 	gistFileName   string
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "modelo",
-	Short: "Boilerplate your projects from Github Templates and Gists",
-	Run: func(cmd *cobra.Command, args []string) {
-		selectedOption = new(feedback.Answer)
-		selectedOption.Template = templateName
-		selectedOption.ProjectName = projectName
-
-		service := github.NewService(config.GetString("username"), config.GetString("token"))
-		ctx := context.Background()
-		selectFromGithubTemplates(service, ctx)
-	},
-}
-
 func init() {
 	var err error
 	config, err = readConfig()
@@ -45,6 +31,36 @@ func init() {
 	gistCmd.PersistentFlags().StringVarP(&gistFileName, "filename", "f", "", "file name")
 
 	rootCmd.AddCommand(gistCmd)
+}
+
+var rootCmd = &cobra.Command{
+	Use:   "modelo",
+	Short: "Boilerplate your projects from Github Templates and Gists",
+	Run: func(cmd *cobra.Command, args []string) {
+		selectedOption = &feedback.Answer{
+			Template:    templateName,
+			ProjectName: projectName,
+		}
+
+		service := github.NewService(config.GetString("username"), config.GetString("token"))
+		ctx := context.Background()
+
+		repositories, err := service.GetRepositories(ctx)
+		if err != nil {
+			log.Fatalf("error getting repositories: %s", err)
+		}
+
+		templates := repositories.FilterTemplates()
+		templateNames := templates.Names()
+
+		if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {
+			log.Fatalf("error selecting repo: %s", err)
+		}
+
+		if err = service.CloneTemplate(selectedOption.ProjectName, selectedOption.Template, repositories); err != nil {
+			log.Fatalf("error cloning repo: %s", err)
+		}
+	},
 }
 
 func Execute() {
@@ -66,22 +82,4 @@ func readConfig() (*viper.Viper, error) {
 	}
 
 	return config, nil
-}
-
-func selectFromGithubTemplates(service github.Service, ctx context.Context) {
-	repositories, err := service.GetRepositories(ctx)
-	if err != nil {
-		log.Fatalf("error getting repositories: %s", err)
-	}
-
-	templates := repositories.FilterTemplates()
-	templateNames := templates.Names()
-
-	if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {
-		log.Fatalf("error selecting repo: %s", err)
-	}
-
-	if err = service.CloneTemplate(selectedOption.ProjectName, selectedOption.Template, repositories); err != nil {
-		log.Fatalf("error cloning repo: %s", err)
-	}
 }
