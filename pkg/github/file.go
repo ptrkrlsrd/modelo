@@ -1,6 +1,7 @@
 package github
 
 import (
+	"fmt"
 	"os"
 	"path"
 )
@@ -58,11 +59,14 @@ func (files Files) GetNames() []string {
 	return fileNames
 }
 
-func (files Files) ToMap() map[string]File {
+func (files Files) ToMap() (map[string]File, error) {
 	fileMap := make(map[string]File)
 
 	for _, file := range files {
+		if file.Name == "" {
+			return nil, fmt.Errorf("filename cannot be empty")
+		}
 		fileMap[file.Name] = file
 	}
-	return fileMap
+	return fileMap, nil
 }
