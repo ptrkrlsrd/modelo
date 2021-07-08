@@ -37,7 +37,11 @@ var gistCmd = &cobra.Command{
 			selectedOption.FileName = selectedOption.Template
 		}
 
-		gistFiles := filteredFiles.ToMap()
+		gistFiles, err := filteredFiles.ToMap()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		selectedGist := gistFiles[selectedOption.Template]
 		selectedGist.Write(selectedOption.ProjectName, selectedOption.FileName)
 	},
