@@ -11,7 +11,24 @@ func TestRepositories_GetTemplates(t *testing.T) {
 		repositories Repositories
 		want         Repositories
 	}{
-		// TODO: Add test cases.
+		{
+			repositories: Repositories{
+				Repository{
+					Name:       "non-template repo",
+					IsTemplate: false,
+				},
+				Repository{
+					Name:       "template repo",
+					IsTemplate: true,
+				},
+			},
+			want: Repositories{
+				Repository{
+					Name:       "template repo",
+					IsTemplate: true,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -28,7 +45,18 @@ func TestRepositories_GetNames(t *testing.T) {
 		repositories        Repositories
 		wantRepositoryNames []string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "get names from repositories name",
+			repositories: Repositories{
+				{
+					Name: "Repo 1",
+				},
+				{
+					Name: "Repo 2",
+				},
+			},
+			wantRepositoryNames: []string{"Repo 1", "Repo 2"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -50,7 +78,19 @@ func TestRepositories_FindByName(t *testing.T) {
 		want         Repository
 		wantErr      bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "can find repo by name",
+			repositories: Repositories{
+				{
+					Name: "Repo 1",
+				},
+			},
+			args: args{
+				name: "Repo 1",
+			},
+			want:    Repository{Name: "Repo 1"},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
