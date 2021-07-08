@@ -17,8 +17,14 @@ func TestNewService(t *testing.T) {
 	}{
 		{
 			name: "Can make a new service",
-			args: args{githubUsername: "abc", githubToken: ""},
-			want: Service{},
+			args: args{githubUsername: "github_username", githubToken: "github_token"},
+			want: Service{
+				GithubClient: newClient("github_token"),
+				auth: Auth{
+					Username: "github_username",
+					Token:    "github_token",
+				},
+			},
 		},
 	}
 	for _, tt := range tests {
