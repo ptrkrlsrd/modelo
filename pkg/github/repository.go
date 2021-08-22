@@ -1,7 +1,6 @@
 package github
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -35,19 +34,10 @@ func (repositories Repositories) GetNames() (repositoryNames []string) {
 	return repositoryNames
 }
 
-func indexOf(element string, ignored []string) (int, error) {
-	for k, v := range ignored {
-		if element == v {
-			return k, nil
-		}
-	}
-	return -1, errors.New("could not find")
-}
-
 func (repositories Repositories) Filter(ignored []string) Repositories {
 	filtered := Repositories{}
 	for _, v := range repositories {
-		if _, err := indexOf(v.Name, ignored); err != nil {
+    if !contains(v.Name, ignored) {
 			filtered = append(filtered, v)
 		}
 	}

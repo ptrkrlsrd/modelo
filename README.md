@@ -39,6 +39,21 @@ Use "modelo [command] --help" for more information about a command.
 4. Run `modelo` or `modelo gist` (to create from a Gist) and follow the instructions
 * Note: Only 'template repositories' will be listed in the CLI
 
+## Optional
+* If you want to ignore a repo, you can do so by adding the name of the repo to `repos.ignored` as shown below. You also ignore gists by adding the name of the gist to `gists.ignored`.
+{ 
+  "username": "<github username>", 
+  "token": "<github token>",
+  "repos": {
+    "ignored": ["<your ignored repo>"],
+  },
+  "gists": {
+    "ignored": [
+      "main.py", 
+    ]
+  }
+} 
+
 ## Upcoming features
 * Add ability to use other Github users templates
 
