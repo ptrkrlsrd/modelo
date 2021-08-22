@@ -12,8 +12,6 @@ Project templating made easy using Github templates or create single files from 
 
 ### Usage
 ```
-Boilerplate your projects from Github Templates and Gists
-
 Usage:
   modelo [flags]
   modelo [command]
@@ -21,6 +19,7 @@ Usage:
 Available Commands:
   gist        Gist
   help        Help about any command
+  repository  
 
 Flags:
   -h, --help              help for modelo
