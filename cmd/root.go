@@ -52,6 +52,11 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("error getting repositories: %s", err)
 		}
 
+		includedRepos := config.GetStringMapString("repositories.include")
+		for i, v := range includedRepos {
+			filteredRepos = filteredRepos.AddRepository(github.NewRepository(i, v, false, true))
+		}
+
 		templates := filteredRepos.GetTemplates()
 		templateNames := templates.GetNames()
 
@@ -59,7 +64,7 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("error selecting repo: %s", err)
 		}
 
-		if err = service.CloneTemplate(selectedOption.ProjectName, selectedOption.Template, repositories); err != nil {
+		if err = service.CloneTemplate(selectedOption.ProjectName, selectedOption.Template, filteredRepos); err != nil {
 			log.Fatalf("error cloning repo: %s", err)
 		}
 	},

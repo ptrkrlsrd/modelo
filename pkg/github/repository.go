@@ -2,6 +2,7 @@ package github
 
 import (
 	"fmt"
+	"regexp"
 )
 
 type Repository struct {
@@ -9,6 +10,15 @@ type Repository struct {
 	URL        string
 	IsTemplate bool
 	IsPrivate  bool
+}
+
+func NewRepository(name, url string, isPrivate, isTemplate bool) Repository {
+	return Repository{
+		Name:       name,
+		URL:        url,
+		IsTemplate: isTemplate,
+		IsPrivate:  isPrivate,
+	}
 }
 
 type Repositories []Repository
@@ -37,7 +47,7 @@ func (repositories Repositories) GetNames() (repositoryNames []string) {
 func (repositories Repositories) Filter(ignored []string) Repositories {
 	filtered := Repositories{}
 	for _, v := range repositories {
-    if !contains(v.Name, ignored) {
+		if !contains(v.Name, ignored) {
 			filtered = append(filtered, v)
 		}
 	}
@@ -55,4 +65,19 @@ func (repositories Repositories) FindByName(name string) (Repository, error) {
 	}
 
 	return Repository{}, fmt.Errorf("failed finding repository with name: " + name)
+}
+
+func (repositories Repositories) AddRepository(repo Repository) Repositories {
+	repositories = append(repositories, repo)
+	return repositories
+}
+
+func IsValidGitURL(url string) bool {
+	validGitURL := regexp.MustCompile(`((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)?(/)?`)
+	return validGitURL.Match([]byte(url))
+}
+
+func IsValidRepoName(name string) bool {
+	validGitName := regexp.MustCompile(`[A-Za-z0-9_.-]`)
+	return validGitName.Match([]byte(name))
 }

@@ -43,8 +43,7 @@ Use "modelo [command] --help" for more information about a command.
 * If you want to ignore a repo, you can do so by adding the name of the repo to `repos.ignored` as shown below. You also ignore gists by adding the name of the gist to `gists.ignored`.
 ``` json
 { 
-  "username": "<github username>", 
-  "token": "<github token>",
+  ....
   "repos": {
     "ignored": ["<name of the repo you want to ignore>"],
   },
@@ -55,9 +54,6 @@ Use "modelo [command] --help" for more information about a command.
   }
 } 
 ```
-
-## Upcoming features
-* Add ability to use other Github users templates
 
 ## What does Modelo mean?
 Modelo is Portuguese for template. I chose the name because I have a good friend from Portugal, who recently lost a loved one due to cancer.
