@@ -12,6 +12,7 @@ func TestRepositories_GetTemplates(t *testing.T) {
 		want         Repositories
 	}{
 		{
+			name: "filters out non-template repo",
 			repositories: Repositories{
 				Repository{
 					Name:       "non-template repo",
@@ -28,6 +29,16 @@ func TestRepositories_GetTemplates(t *testing.T) {
 					IsTemplate: true,
 				},
 			},
+		},
+		{
+			name: "returns empty array if there are no template repos",
+			repositories: Repositories{
+				Repository{
+					Name:       "non-template repo",
+					IsTemplate: false,
+				},
+			},
+			want: nil,
 		},
 	}
 	for _, tt := range tests {
@@ -90,6 +101,15 @@ func TestRepositories_FindByName(t *testing.T) {
 			},
 			want:    Repository{Name: "Repo 1"},
 			wantErr: false,
+		},
+		{
+			name:         "fails cant find",
+			repositories: Repositories{},
+			args: args{
+				name: "Repo 1",
+			},
+			want:    Repository{},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

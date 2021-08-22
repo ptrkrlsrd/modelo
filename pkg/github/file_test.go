@@ -69,13 +69,9 @@ func TestFiles_GetNames(t *testing.T) {
 		want  []string
 	}{
 		{
-			name: "Can get names",
-			files: []File{
-				{
-					Name: "name",
-				},
-			},
-			want: []string{"name"},
+			name:  "Can get names",
+			files: []File{{Name: "name"}, {Name: "name"}, {Name: "name"}},
+			want:  []string{"name", "name", "name"},
 		},
 	}
 	for _, tt := range tests {
