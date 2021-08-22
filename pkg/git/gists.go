@@ -1,4 +1,4 @@
-package github
+package git
 
 type Gist struct {
 	Name  string

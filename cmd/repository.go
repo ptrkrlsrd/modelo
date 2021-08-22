@@ -18,7 +18,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/ptrkrlsrd/modelo/pkg/github"
+	"github.com/ptrkrlsrd/modelo/pkg/git"
 	"github.com/spf13/cobra"
 )
 
@@ -44,11 +44,11 @@ var includeRepositoryCmd = &cobra.Command{
 		repoName := args[0]
 		repoURL := args[1]
 
-		if !github.IsValidGitURL(repoURL) {
+		if !git.IsValidGitURL(repoURL) {
 			log.Fatal("invalid repo url")
 		}
 
-		if !github.IsValidRepoName(repoURL) {
+		if !git.IsValidRepoName(repoURL) {
 			log.Fatal("invalid repo name")
 		}
 

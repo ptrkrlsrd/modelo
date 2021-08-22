@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/ptrkrlsrd/modelo/internal/feedback"
-	"github.com/ptrkrlsrd/modelo/pkg/github"
+	"github.com/ptrkrlsrd/modelo/pkg/git"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -42,7 +42,7 @@ var rootCmd = &cobra.Command{
 			ProjectName: projectPath,
 		}
 
-		service := github.NewService(config.GetString("username"), config.GetString("token"))
+		service := git.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 
 		ignored := config.GetStringSlice("repositories.ignored")
@@ -54,7 +54,7 @@ var rootCmd = &cobra.Command{
 
 		includedRepos := config.GetStringMapString("repositories.include")
 		for i, v := range includedRepos {
-			filteredRepos = filteredRepos.AddRepository(github.NewRepository(i, v, false, true))
+			filteredRepos = filteredRepos.AddRepository(git.NewRepository(i, v, false, true))
 		}
 
 		templates := filteredRepos.GetTemplates()

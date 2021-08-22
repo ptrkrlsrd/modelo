@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/ptrkrlsrd/modelo/internal/feedback"
-	"github.com/ptrkrlsrd/modelo/pkg/github"
+	"github.com/ptrkrlsrd/modelo/pkg/git"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ var gistCmd = &cobra.Command{
 	Use:   "gist",
 	Short: "Gist",
 	Run: func(cmd *cobra.Command, args []string) {
-		service := github.NewService(config.GetString("username"), config.GetString("token"))
+		service := git.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 		selectedOption = &feedback.Answer{
 			Template: templateName,
