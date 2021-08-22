@@ -41,6 +41,7 @@ Use "modelo [command] --help" for more information about a command.
 
 ## Optional
 * If you want to ignore a repo, you can do so by adding the name of the repo to `repos.ignored` as shown below. You also ignore gists by adding the name of the gist to `gists.ignored`.
+``` json
 { 
   "username": "<github username>", 
   "token": "<github token>",
@@ -53,6 +54,7 @@ Use "modelo [command] --help" for more information about a command.
     ]
   }
 } 
+```
 
 ## Upcoming features
 * Add ability to use other Github users templates
