@@ -34,6 +34,17 @@ func (repositories Repositories) GetNames() (repositoryNames []string) {
 	return repositoryNames
 }
 
+func (repositories Repositories) Filter(ignored []string) Repositories {
+	filtered := Repositories{}
+	for _, v := range repositories {
+    if !contains(v.Name, ignored) {
+			filtered = append(filtered, v)
+		}
+	}
+
+	return filtered
+}
+
 func (repositories Repositories) FindByName(name string) (Repository, error) {
 	for _, v := range repositories {
 		if v.Name != name {

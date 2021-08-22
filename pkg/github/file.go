@@ -30,7 +30,7 @@ func (file *File) Write(filePath string, fileName string) error {
 	return nil
 }
 
-func contains(slice []string, item string) bool {
+func contains(item string, slice []string) bool {
 	set := make(map[string]struct{}, len(slice))
 	for _, s := range slice {
 		set[s] = struct{}{}
@@ -43,7 +43,7 @@ func contains(slice []string, item string) bool {
 func (files Files) Filter(ignored []string) Files {
 	var filteredFiles Files
 	for _, file := range files {
-		if contains(ignored, file.Name) {
+		if contains(file.Name, ignored) {
 			continue
 		}
 		filteredFiles = append(filteredFiles, file)

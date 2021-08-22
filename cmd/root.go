@@ -45,12 +45,14 @@ var rootCmd = &cobra.Command{
 		service := github.NewService(config.GetString("username"), config.GetString("token"))
 		ctx := context.Background()
 
+		ignored := config.GetStringSlice("repositories.ignored")
 		repositories, err := service.GetRepositories(ctx)
+		filteredRepos := repositories.Filter(ignored)
 		if err != nil {
 			log.Fatalf("error getting repositories: %s", err)
 		}
 
-		templates := repositories.GetTemplates()
+		templates := filteredRepos.GetTemplates()
 		templateNames := templates.GetNames()
 
 		if err = feedback.AskTemplateQuestion("Select a Github Template: ", selectedOption, templateNames); err != nil {

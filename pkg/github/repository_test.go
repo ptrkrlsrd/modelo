@@ -103,7 +103,7 @@ func TestRepositories_FindByName(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:         "fails cant find",
+			name:         "fails when cant find",
 			repositories: Repositories{},
 			args: args{
 				name: "Repo 1",
@@ -121,6 +121,96 @@ func TestRepositories_FindByName(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Repositories.FindByName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRepositories_Filter(t *testing.T) {
+	type args struct {
+		ignored []string
+	}
+	tests := []struct {
+		name         string
+		repositories Repositories
+		args         args
+		want         Repositories
+	}{
+		{
+			name: "can filter with one ignored repo",
+			repositories: Repositories{
+				{
+					Name: "repo",
+				},
+				{
+					Name: "ignored",
+				},
+			},
+			args: args{
+				ignored: []string{"ignored"},
+			},
+			want: Repositories{
+				{
+					Name: "repo",
+				},
+			},
+		},
+		{
+			name: "can filter multiple ignored repos",
+			repositories: Repositories{
+				{
+					Name: "repo",
+				},
+				{
+					Name: "ignored",
+				},
+				{
+					Name: "another ignored repo",
+				},
+			},
+			args: args{
+				ignored: []string{"ignored", "another ignored repo"},
+			},
+			want: Repositories{
+				{
+					Name: "repo",
+				},
+			},
+		},
+		{
+			name: "works when there are no ignored repos",
+			repositories: Repositories{
+				{
+					Name: "repo",
+				},
+				{
+					Name: "repo 2",
+				},
+				{
+					Name: "repo 3",
+				},
+			},
+			args: args{
+				ignored: []string{},
+			},
+			want: Repositories{
+				{
+					Name: "repo",
+				},
+				{
+					Name: "repo 2",
+				},
+				{
+					Name: "repo 3",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.repositories.Filter(tt.args.ignored); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Repositories.Filter() = %v, want %v", got, tt.want)
 			}
 		})
 	}
