@@ -215,3 +215,55 @@ func TestRepositories_Filter(t *testing.T) {
 		})
 	}
 }
+
+func TestIsValidRepoName(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		want bool
+	}{
+		{
+			name: "ok repo name",
+			args: "cobra",
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsValidRepoName(tt.args); got != tt.want {
+				t.Errorf("IsValidRepoName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsValidGitURL(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		want bool
+	}{
+		{
+			name: "HTTPS URL is valid",
+			args: "https://github.com/spf13/cobra.git",
+			want: true,
+		},
+		{
+			name: "SSH URL is valid",
+			args: "git@github.com:spf13/cobra.git",
+			want: true,
+		},
+		{
+			name: "invalid URL returns false",
+			args: "cobra",
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsValidGitURL(tt.args); got != tt.want {
+				t.Errorf("IsValidGitURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
