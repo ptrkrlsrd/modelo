@@ -45,7 +45,7 @@ Use "modelo [command] --help" for more information about a command.
 { 
   "username": "<github username>", 
   "token": "<github token>",
-  "repos": {
+  "repositories": {
     "ignored": ["<name of the repo you want to ignore>"],
   },
   "gists": {
