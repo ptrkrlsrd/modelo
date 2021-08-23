@@ -125,7 +125,7 @@ func TestFileFilter(t *testing.T) {
 	}
 }
 
-func TestFile_Write(t *testing.T) {
+func TestFileWrite(t *testing.T) {
 	type fields struct {
 		Name      string
 		Extension string
