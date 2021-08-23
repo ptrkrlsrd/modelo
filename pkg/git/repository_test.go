@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestRepositories_GetTemplates(t *testing.T) {
+func TestRepositoriesGetTemplates(t *testing.T) {
 	tests := []struct {
 		name         string
 		repositories Repositories
@@ -50,7 +50,7 @@ func TestRepositories_GetTemplates(t *testing.T) {
 	}
 }
 
-func TestRepositories_GetNames(t *testing.T) {
+func TestRepositoriesGetNames(t *testing.T) {
 	tests := []struct {
 		name                string
 		repositories        Repositories
@@ -78,7 +78,7 @@ func TestRepositories_GetNames(t *testing.T) {
 	}
 }
 
-func TestRepositories_FindByName(t *testing.T) {
+func TestRepositoriesFindByName(t *testing.T) {
 	type args struct {
 		name string
 	}
@@ -126,7 +126,7 @@ func TestRepositories_FindByName(t *testing.T) {
 	}
 }
 
-func TestRepositories_Filter(t *testing.T) {
+func TestRepositoriesFilter(t *testing.T) {
 	type args struct {
 		ignored []string
 	}
@@ -268,7 +268,7 @@ func TestIsValidGitURL(t *testing.T) {
 	}
 }
 
-func TestRepositories_AddRepository(t *testing.T) {
+func TestRepositoriesAddRepository(t *testing.T) {
 	args := Repository{Name: "Repo", URL: "https://github.com/repo/repo"}
 
 	tests := []struct {

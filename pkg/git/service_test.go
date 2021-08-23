@@ -82,7 +82,7 @@ func TestNewService(t *testing.T) {
 	}
 }
 
-func TestService_GetUsersGists(t *testing.T) {
+func TestServiceGetUsersGists(t *testing.T) {
 	type fields struct {
 		client mockClient
 		auth   Auth
@@ -126,7 +126,7 @@ func TestService_GetUsersGists(t *testing.T) {
 	}
 }
 
-func TestService_GetRepositories(t *testing.T) {
+func TestServiceGetRepositories(t *testing.T) {
 	type fields struct {
 		client RepoReaderWriter
 		auth   Auth

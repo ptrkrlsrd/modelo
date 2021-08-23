@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestFiles_ToMap(t *testing.T) {
+func TestFileToMap(t *testing.T) {
 	testFile := File{
 		Name:      "test",
 		Extension: "go",
@@ -62,7 +62,7 @@ func TestFiles_ToMap(t *testing.T) {
 	}
 }
 
-func TestFiles_GetNames(t *testing.T) {
+func TestFileGetNames(t *testing.T) {
 	tests := []struct {
 		name  string
 		files Files
@@ -83,7 +83,7 @@ func TestFiles_GetNames(t *testing.T) {
 	}
 }
 
-func TestFiles_Filter(t *testing.T) {
+func TestFileFilter(t *testing.T) {
 	type args struct {
 		ignored []string
 	}

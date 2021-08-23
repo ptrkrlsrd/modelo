@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGists_GetFiles(t *testing.T) {
+func TestGistsGetFiles(t *testing.T) {
 	tests := []struct {
 		name  string
 		gists Gists
