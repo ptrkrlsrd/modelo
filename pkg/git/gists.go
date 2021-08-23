@@ -7,7 +7,7 @@ type Gist struct {
 
 type Gists []Gist
 
-func (gists Gists) GetFiles() Files {
+func (gists Gists) ToFiles() Files {
 	var files Files
 	for _, i := range gists {
 		files = append(files, i.Files...)

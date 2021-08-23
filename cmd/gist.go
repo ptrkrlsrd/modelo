@@ -20,13 +20,13 @@ var gistCmd = &cobra.Command{
 			FileName: gistFileName,
 		}
 
-		gists, err := service.GetGists(ctx)
+		gists, err := service.GetUsersGists(ctx)
 		if err != nil {
 			log.Fatalf("error getting gists: %s", err)
 		}
 
 		ignored := config.GetStringSlice("gists.ignored")
-		filteredFiles := gists.GetFiles().Filter(ignored)
+		filteredFiles := gists.ToFiles().Filter(ignored)
 		gistNames := filteredFiles.GetNames()
 
 		if err := feedback.AskGistQuestions("Select a Gist", selectedOption, gistNames); err != nil {

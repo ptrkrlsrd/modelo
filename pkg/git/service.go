@@ -15,8 +15,13 @@ type Auth struct {
 	Token    string
 }
 
+type RepoReaderWriter interface {
+	Query(ctx context.Context, q interface{}, variables map[string]interface{}) error
+	Mutate(ctx context.Context, m interface{}, input githubv4.Input, variables map[string]interface{}) error
+}
+
 type Service struct {
-	GithubClient *githubv4.Client
+	GithubClient RepoReaderWriter
 	auth         Auth
 }
 
@@ -30,13 +35,17 @@ func NewService(githubUsername string, githubToken string) Service {
 	}
 }
 
+type repositoryData struct {
+	Nodes Repositories
+}
+
+type repositoryViewer struct {
+	Name         string
+	Repositories repositoryData `graphql:"repositories(first: 100)"`
+}
+
 type RepositoryQuery struct {
-	Viewer struct {
-		Name         string
-		Repositories struct {
-			Nodes Repositories
-		} `graphql:"repositories(first: 100)"`
-	}
+	Viewer repositoryViewer
 }
 
 func (service Service) GetRepositories(ctx context.Context) (Repositories, error) {
@@ -48,16 +57,20 @@ func (service Service) GetRepositories(ctx context.Context) (Repositories, error
 	return query.Viewer.Repositories.Nodes, nil
 }
 
-type GistQuery struct {
-	Viewer struct {
-		Name  string
-		Gists struct {
-			Nodes Gists
-		} `graphql:"gists(first: 100)"`
-	}
+type gistData struct {
+	Nodes Gists
 }
 
-func (service Service) GetGists(ctx context.Context) (Gists, error) {
+type gistViewer struct {
+	Name  string
+	Gists gistData `graphql:"gists(first: 100)"`
+}
+
+type GistQuery struct {
+	Viewer gistViewer
+}
+
+func (service Service) GetUsersGists(ctx context.Context) (Gists, error) {
 	var query GistQuery
 	if err := service.GithubClient.Query(ctx, &query, nil); err != nil {
 		return nil, err

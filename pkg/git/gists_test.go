@@ -15,7 +15,7 @@ func TestGists_GetFiles(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.gists.GetFiles(); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.gists.ToFiles(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Gists.GetFiles() = %v, want %v", got, tt.want)
 			}
 		})

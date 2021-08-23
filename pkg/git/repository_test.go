@@ -104,7 +104,7 @@ func TestRepositories_FindByName(t *testing.T) {
 		},
 		{
 			name:         "fails when cant find",
-			repositories: Repositories{},
+			repositories: Repositories{Repository{Name: "Repo 2"}},
 			args: args{
 				name: "Repo 1",
 			},
@@ -263,6 +263,59 @@ func TestIsValidGitURL(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := IsValidGitURL(tt.args); got != tt.want {
 				t.Errorf("IsValidGitURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRepositories_AddRepository(t *testing.T) {
+	args := Repository{Name: "Repo", URL: "https://github.com/repo/repo"}
+
+	tests := []struct {
+		name         string
+		repositories Repositories
+		args         Repository
+		want         Repositories
+	}{
+		{
+			args:         args,
+			repositories: Repositories{},
+			want:         Repositories{args},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.repositories.AddRepository(tt.args); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Repositories.AddRepository() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewRepository(t *testing.T) {
+	type args struct {
+		name       string
+		url        string
+		isPrivate  bool
+		isTemplate bool
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want Repository
+	}{
+		{
+			name: "Can create repo",
+			args: args{name: "repo 1", url: "https://github.com/repo/repo.git", isPrivate: false, isTemplate: true},
+			want: Repository{Name: "repo 1", URL: "https://github.com/repo/repo.git", IsPrivate: false, IsTemplate: true},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewRepository(tt.args.name, tt.args.url, tt.args.isPrivate, tt.args.isTemplate); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewRepository() = %v, want %v", got, tt.want)
 			}
 		})
 	}
