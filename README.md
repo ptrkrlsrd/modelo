@@ -1,6 +1,7 @@
 # Modelo
 ## Boilerplate your projects from Github Templates and Gists 
 [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ptrkrlsrd_modelo)](https://sonarcloud.io/dashboard?id=ptrkrlsrd_modelo)
+[![Coverage Status](https://coveralls.io/repos/github/ptrkrlsrd/modelo/badge.svg?branch=main)](https://coveralls.io/github/ptrkrlsrd/modelo?branch=main)
 
 ## Intro
 Project templating made easy using Github templates or create single files from Gists. Think of it as create-react-app for any type of projects!
